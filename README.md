@@ -13,9 +13,9 @@
 **Setup - Web (Nuxt.js/Vue.js)**
 1. Install packages using npm install
 2. PS - Safest way to ensure all modules are installed well from experience is to clear your cache, delete modules folder and re-install npm.
-npm cache clean --force
-rm -rf node_modules
-npm install --save nuxt
+    1. npm cache clean --force
+    2. rm -rf node_modules
+    3. npm install --save nuxt
 
 
 **Environment Set Up**

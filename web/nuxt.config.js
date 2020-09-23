@@ -1,6 +1,6 @@
 
 export default {
-  mode: 'universal',
+  // 
   /*
   ** Headers of the page
   */
@@ -13,7 +13,7 @@ export default {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-    ]
+    ],
   },
   /*
   ** Customize the progress-bar color
@@ -34,6 +34,7 @@ export default {
   */
   buildModules: [
     '@nuxt/typescript-build',
+    '@nuxtjs/dotenv'
   ],
   /*
   ** Nuxt.js modules
@@ -62,5 +63,15 @@ export default {
     */
     extend (config, ctx) {
     }
+  },
+
+  /* server details */
+  server: {
+    port: 3000, 
+    host: "127.0.0.1"
+  },
+
+  env: {
+    baseUrl: process.env.API_BASE_URL || 'http://ml-api'
   }
 }

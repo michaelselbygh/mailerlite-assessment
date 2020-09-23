@@ -85,24 +85,26 @@ export default {
     return {
       show: false,
       payment: {},
-
+      apiBaseUrl: 'http://ml-api.local',
       account: null,
       transactions: null,
-
+      // apiBaseUrl: process.env.API_BASE_URL,
       loading: true
     };
   },
 
   mounted() {
     const that = this;
+    console.log(this.show);
 
     axios
-      .get(`http://localhost:8000/api/accounts/${this.$route.params.id}`)
+      .get(`${this.apiBaseUrl}/api/accounts/${this.$route.params.id}`)
       .then(function(response) {
-        if (!response.data.length) {
-          window.location = "/";
+        
+        if (!response.data.id) {
+          window.location.href = "/";
         } else {
-          that.account = response.data[0];
+          that.account = response.data;
 
           if (that.account && that.transactions) {
             that.loading = false;
@@ -112,7 +114,7 @@ export default {
 
     axios
       .get(
-        `http://localhost:8000/api/accounts/${
+        `${this.apiBaseUrl}/api/accounts/${
           that.$route.params.id
         }/transactions`
       )
@@ -147,7 +149,7 @@ export default {
       evt.preventDefault();
 
       axios.post(
-        `http://localhost:8000/api/accounts/${
+        `${this.apiBaseUrl}/api/accounts/${
           this.$route.params.id
         }/transactions`,
 
@@ -160,10 +162,10 @@ export default {
       // update items
       setTimeout(() => {
         axios
-          .get(`http://localhost:8000/api/accounts/${this.$route.params.id}`)
+          .get(`${this.apiBaseUrl}/api/accounts/${this.$route.params.id}`)
           .then(function(response) {
             if (!response.data.length) {
-              window.location = "/";
+              // window.location = "/";
             } else {
               that.account = response.data[0];
             }
@@ -171,7 +173,7 @@ export default {
 
         axios
           .get(
-            `http://localhost:8000/api/accounts/${
+            `${this.apiBaseUrl}/api/accounts/${
               that.$route.params.id
             }/transactions`
           )

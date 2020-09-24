@@ -140,7 +140,7 @@ export default Vue.extend({
   },
 
   methods: {
-    async onSubmit(evt) {
+    async onSubmit(evt: any) {
       evt.preventDefault();
 
       var response = await axios.post(
@@ -152,13 +152,13 @@ export default Vue.extend({
       );
 
       if (response.data.code == 200) {
-          this.$izitoast.success({
+          (this as any).$izitoast.success({
             message: 'Transaction processed successfully'
           });
           this.transactions = response.data.transactions;
           this.account = response.data.account;
         }else{
-          this.$izitoast.error({
+          (this as any).$izitoast.error({
             message: response.data.message
           });
         }

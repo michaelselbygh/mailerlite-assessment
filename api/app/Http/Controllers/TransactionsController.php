@@ -34,7 +34,7 @@ class TransactionsController extends Controller
         $toCustomer = Account::find($request->to);
 
         # check if sending amount exceeds customers balance
-        if ($amount > $fromCustomer->balance) {
+        if ($request->amount > $fromCustomer->balance) {
             # insufficient funds
             return response()->json([
                 "code" => 400,
@@ -76,7 +76,7 @@ class TransactionsController extends Controller
             $formattedTransactions[$i]["from"] = $transactions[$i]["from"];
             $formattedTransactions[$i]["to"] = $transactions[$i]["to"];
             $formattedTransactions[$i]["details"] = $transactions[$i]["details"];
-            # defaulting curresncy to USD
+            # defaulting currency to USD
             $formattedTransactions[$i]["amount"] = $formattedTransactions[$i]["from"] == $id? "- $ ".$transactions[$i]["amount"] : "$ ".$transactions[$i]["amount"];
             $formattedTransactions[$i]["processed"] = date('d-m-Y h:i:s A',strtotime($transactions[$i]["created_at"]));
         }

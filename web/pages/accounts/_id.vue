@@ -3,7 +3,7 @@
     <div class="container" v-if="loading">loading...</div>
 
     <div class="container" v-if="!loading">
-      <b-card :header="'Welcome, ' + account.name" class="mt-3">
+      <b-card v-if="account" :header="'Welcome, ' + account.name" class="mt-3">
         <b-card-text>
           <div>
             Account: <code>{{ account.id }}</code>
@@ -132,25 +132,30 @@ export default {
 
       evt.preventDefault();
 
-      that.transactions = 
-      axios.post(
+      var response = axios.post(
         `${this.apiBaseUrl}/api/accounts/${
           this.$route.params.id
         }/transactions`,
 
         this.payment
-      );
+      ).then((response) => {
+        console.log(response.data);
+        this.transactions = response.data.transactions;
+        this.account = response.data.account;
+      });
 
+      
       that.payment = {};
       that.show = false;
+
 
       // update items
       setTimeout(() => {
         axios
           .get(`${this.apiBaseUrl}/api/accounts/${this.$route.params.id}`)
           .then(function(response) {
-            if (!response.data.length) {
-              // window.location = "/";
+            if (!(response.data.code == 200)) {
+              //
             } else {
               that.account = response.data[0];
             }

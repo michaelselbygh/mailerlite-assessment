@@ -9,6 +9,10 @@ class CurrenciesController extends Controller
 {
     public function getCurrencies(){
         # Return all currencies
-        return Currency::all();
+        return response()->json([
+            "code" => 200,
+            "message" => "Currencies retrieved",
+            "currencies" => Currency::all()
+        ]);
     }
 }

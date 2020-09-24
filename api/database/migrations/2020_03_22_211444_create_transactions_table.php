@@ -19,6 +19,8 @@ class CreateTransactionsTable extends Migration
             $table->bigInteger('to')->unsigned();
             $table->text('details');
             $table->float('amount');
+            $table->timestamp('created_at')->useCurrent(); 
+            $table->timestamp('updated_at')->useCurrent();
         });
     }
 

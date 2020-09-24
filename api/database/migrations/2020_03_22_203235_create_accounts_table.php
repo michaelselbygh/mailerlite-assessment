@@ -17,6 +17,8 @@ class CreateAccountsTable extends Migration
             $table->id();
             $table->text('name');
             $table->float('balance');
+            $table->timestamp('created_at')->useCurrent(); 
+            $table->timestamp('updated_at')->useCurrent();
         });
     }
 

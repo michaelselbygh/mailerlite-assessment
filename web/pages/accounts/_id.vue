@@ -11,8 +11,7 @@
           <div>
             Balance:
             <code
-              >{{ account.currency === "usd" ? "$" : "€"
-              }}{{ account.balance }}</code
+              >${{ account.balance }}</code
             >
           </div>
         </b-card-text>
@@ -70,7 +69,12 @@
       </b-card>
 
       <b-card class="mt-3" header="Payment History">
-        <b-table striped hover :items="transactions"></b-table>
+        <b-table striped hover 
+        :items="transactions" 
+        :fields="fields"
+        :sort-by.sync="sortBy"
+        :sort-desc.sync="sortDesc"
+        ></b-table>
       </b-card>
     </div>
   </div>
@@ -80,7 +84,7 @@
 import axios from "axios";
 import Vue from "vue";
 
-export default {
+export default Vue.extend({
   data() {
     return {
       show: false,
@@ -89,12 +93,39 @@ export default {
       account: null,
       transactions: null,
 
-      loading: true
+      loading: true,
+      sortBy: 'id',
+      sortDesc: 'true',
+      fields: [
+          {
+            key: 'id',
+            sortable: true
+          },
+          {
+            key: 'from',
+            sortable: false
+          },
+          {
+            key: 'to',
+            sortable: true,
+          },
+          {
+            key: 'details',
+            sortable: true,
+          },
+          {
+            key: 'amount',
+            sortable: true,
+          },
+          {
+            key: 'processed',
+            sortable: true,
+          }
+        ],
     };
   },
 
   mounted() {
-    console.log(this);
     const that = this;
 
     var response = axios.get(`${this.apiBaseUrl}/api/accounts/${this.$route.params.id}/transactions`)
@@ -104,89 +135,36 @@ export default {
         if (this.transactions && this.account) {
           this.loading = false;
         }
-
-        // var transactions = [];
-        // for (let i = 0; i < that.transactions.length; i++) {
-        //   that.transactions[i].amount =
-        //     (that.account.currency === "usd" ? "$" : "€") +
-        //     that.transactions[i].amount;
-
-        //   if (that.account.id != that.transactions[i].to) {
-        //     that.transactions[i].amount = "-" + that.transactions[i].amount;
-        //   }
-
-        //   transactions.push(that.transactions[i]);
-        // }
-
-        // that.transactions = transactions;
-
-        
-
         
       });
   },
 
   methods: {
-    onSubmit(evt) {
-      var that = this;
-
+    async onSubmit(evt) {
       evt.preventDefault();
 
-      var response = axios.post(
+      var response = await axios.post(
         `${this.apiBaseUrl}/api/accounts/${
           this.$route.params.id
         }/transactions`,
 
         this.payment
-      ).then((response) => {
-        console.log(response.data);
-        this.transactions = response.data.transactions;
-        this.account = response.data.account;
-      });
+      );
 
-      
-      that.payment = {};
-      that.show = false;
-
-
-      // update items
-      setTimeout(() => {
-        axios
-          .get(`${this.apiBaseUrl}/api/accounts/${this.$route.params.id}`)
-          .then(function(response) {
-            if (!(response.data.code == 200)) {
-              //
-            } else {
-              that.account = response.data[0];
-            }
+      if (response.data.code == 200) {
+          this.$izitoast.success({
+            message: 'Transaction processed successfully'
           });
-
-        axios
-          .get(
-            `${this.apiBaseUrl}/api/accounts/${
-              that.$route.params.id
-            }/transactions`
-          )
-          .then(function(response) {
-            that["transactions"] = response.data;
-
-            var transactions = [];
-            for (let i = 0; i < that.transactions.length; i++) {
-              that.transactions[i].amount =
-                (that.account.currency === "usd" ? "$" : "€") +
-                that.transactions[i].amount;
-
-              if (that.account.id != that.transactions[i].to) {
-                that.transactions[i].amount = "-" + that.transactions[i].amount;
-              }
-
-              transactions.push(that.transactions[i]);
-            }
-
-            that.transactions = transactions;
+          this.transactions = response.data.transactions;
+          this.account = response.data.account;
+        }else{
+          this.$izitoast.error({
+            message: response.data.message
           });
-      }, 200);
+        }
+      this.payment = {};
+      this.show = false;
     }
   }
-};
+});
 </script>

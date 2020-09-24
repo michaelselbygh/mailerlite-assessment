@@ -42,6 +42,22 @@ class TransactionsController extends Controller
             ]);
         }
 
+        if (!isset($toCustomer)) {
+            # invalid destination account
+            return response()->json([
+                "code" => 400,
+                "message" => "Invalid destination account"
+            ]);
+        }
+
+        if ($id == $request->to) {
+            # identical from and to account
+            return response()->json([
+                "code" => 400,
+                "message" => "Sorry, you can't send money to yourself."
+            ]);
+        }
+
         # reduce sending customer balance
         $fromCustomer->balance -= $request->amount;
         $fromCustomer->save();

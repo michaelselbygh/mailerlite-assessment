@@ -88,57 +88,41 @@ export default {
       apiBaseUrl: 'http://ml-api.local',
       account: null,
       transactions: null,
-      // apiBaseUrl: process.env.API_BASE_URL,
+
       loading: true
     };
   },
 
   mounted() {
+    console.log(this);
     const that = this;
-    console.log(this.show);
 
-    axios
-      .get(`${this.apiBaseUrl}/api/accounts/${this.$route.params.id}`)
-      .then(function(response) {
+    var response = axios.get(`${this.apiBaseUrl}/api/accounts/${this.$route.params.id}/transactions`)
+      .then((response) => {
+        this.transactions = response.data.transactions;
+        this.account = response.data.account;
+        if (this.transactions && this.account) {
+          this.loading = false;
+        }
+
+        // var transactions = [];
+        // for (let i = 0; i < that.transactions.length; i++) {
+        //   that.transactions[i].amount =
+        //     (that.account.currency === "usd" ? "$" : "€") +
+        //     that.transactions[i].amount;
+
+        //   if (that.account.id != that.transactions[i].to) {
+        //     that.transactions[i].amount = "-" + that.transactions[i].amount;
+        //   }
+
+        //   transactions.push(that.transactions[i]);
+        // }
+
+        // that.transactions = transactions;
+
         
-        if (!response.data.id) {
-          window.location.href = "/";
-        } else {
-          that.account = response.data;
 
-          if (that.account && that.transactions) {
-            that.loading = false;
-          }
-        }
-      });
-
-    axios
-      .get(
-        `${this.apiBaseUrl}/api/accounts/${
-          that.$route.params.id
-        }/transactions`
-      )
-      .then(function(response) {
-        that["transactions"] = response.data;
-
-        var transactions = [];
-        for (let i = 0; i < that.transactions.length; i++) {
-          that.transactions[i].amount =
-            (that.account.currency === "usd" ? "$" : "€") +
-            that.transactions[i].amount;
-
-          if (that.account.id != that.transactions[i].to) {
-            that.transactions[i].amount = "-" + that.transactions[i].amount;
-          }
-
-          transactions.push(that.transactions[i]);
-        }
-
-        that.transactions = transactions;
-
-        if (that.account && that.transactions) {
-          that.loading = false;
-        }
+        
       });
   },
 
@@ -148,6 +132,7 @@ export default {
 
       evt.preventDefault();
 
+      that.transactions = 
       axios.post(
         `${this.apiBaseUrl}/api/accounts/${
           this.$route.params.id
